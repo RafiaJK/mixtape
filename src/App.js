@@ -1,13 +1,14 @@
 import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
-
+import Playlist from './Playlist.js'
+import Search from './Search.js'
 
 function App() {
-  const CLIENT_ID = "ab747e71bc2248c7bfe705d183236c54"
-  const REDIRECT_URI = "http://localhost:3000/auth/callback"
-  const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
-  const RESPONSE_TYPE = "token"
+  const CLIENT_ID=process.env.REACT_APP_SPOTIFY_CLIENT_ID
+  const REDIRECT_URI =process.env.REACT_APP_SPOTIFY_REDIRECT_URI
+  const AUTH_ENDPOINT =process.env.REACT_APP_SPOTIFY_AUTH_ENDPOINT
+  const RESPONSE_TYPE = process.env.REACT_APP_SPOTIFY_RESPONSE_TYPE
 
   const [token, setToken] = useState("")
 
@@ -17,15 +18,11 @@ function App() {
 
     if (!token && hash) {
       token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1]
-
       window.location.hash = ""
       window.localStorage.setItem("token", token)
     }
-
     setToken(token)
-
   }, [])
-
 
   const logout = () => {
     setToken("")
@@ -37,10 +34,21 @@ function App() {
       {/* <header className="App-header">
       </header> */}
 
-      {!token ?
-        <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login
-          to Spotify</a>
-        : <button onClick={logout}>Logout</button>}
+      <h2>Mixtape</h2>
+
+      {!token ? 
+              <div > 
+                <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>
+                 Login to Spotify
+               </a>
+              </div> 
+              :
+              <div> 
+                <Search token={token} />
+                <button className= "logOut"onClick={logout}>Logout</button> 
+              </div> 
+      }
+
     </div>
   );
 }
